@@ -1,0 +1,48 @@
+pipeline{
+    tools{
+        jdk 'myjava'
+        maven 'Maven3.6.3'
+    }
+    agent none
+    stages{
+        stage('Checkout'){
+            agent any
+            steps{
+                git 'https://github.com/pranathikare/DevOpsClassCodes.git'
+            }
+        }
+        stage('Compile'){
+            agent any
+            steps{
+                sh 'mvn compile'
+            }
+        }    
+        stage('CodeReview'){
+            agent {label 'win_slave'}
+            steps{
+                git 'https://github.com/pranathikare/DevOpsClassCodes.git'
+                bat 'mvn pmd:pmd'
+            }
+        }
+        stage('Unit Test'){
+            agent any
+            steps{
+                sh 'mvn test'
+            }
+        }
+        stage('MetricCheck'){
+            agent {label 'win_slave'}
+            steps{
+                git 'https://github.com/pranathikare/DevOpsClassCodes.git'
+                bat 'cobetura:cobetura -Dcobetura.report.format=xml'
+            }
+        }
+        stage('Package'){
+            agent any
+            steps{
+                sh 'mvn package'
+            }
+        }
+        
+    }
+}
