@@ -36,7 +36,7 @@ pipeline{
             }
             post {
                 always{
-                    juni 'target/surefire-reports/*.xml'
+                    junit 'target/surefire-reports/*.xml'
                 }
             }
         }
@@ -44,7 +44,7 @@ pipeline{
             agent {label 'win_slave'}
             steps{
                 git 'https://github.com/pranathikare/DevOpsClassCodes.git'
-                bat 'cobertura:cobertura -Dcobertura.report.format=xml'
+                bat 'mvn cobertura:cobertura -Dcobertura.report.format=xml'
             }
             post{
                 always{
